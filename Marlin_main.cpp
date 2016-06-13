@@ -232,20 +232,9 @@ bool Stopped=false;
 
 #ifdef ICEMAN3D
 bool min_software_endstops = true;
-bool PausePrint = false;
-bool NoFilament = false;
 volatile bool BLN = false;  //volatile
 volatile int brightness = 100;  //volatile
-float last_position_z = 0.0;
-int temp_target_temperature[EXTRUDERS] = {0};
-int temp_target_temperature_bed = 0;
-int lastFanSpeed=0;
 float lastpos[4] = {0.0,0.0,0.0,0.0};
-int adjustOffsetPos[2] = {12,13};
-
-int adjustPointCount = 0;
-int adjustPointParams[4][2] = {{0,0},{0,0},{0,0},{0,0}};
-#define ZOFFSET 30
 #endif
 
 #if (defined NUM_SERVOS) && (NUM_SERVOS > 0)
@@ -1159,10 +1148,7 @@ void process_commands()
         autotemp_enabled=false;
       #endif
       if (code_seen('S')) setTargetHotend(code_value(), tmp_extruder);
-	  
-		#ifdef ICEMAN3D
-			temp_target_temperature[tmp_extruder] = code_value();
-		#endif
+
 
       #ifdef AUTOTEMP
         if (code_seen('S')) autotemp_min=code_value();
