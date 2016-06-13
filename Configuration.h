@@ -11,7 +11,7 @@
 #define STRING_VERSION_CONFIG_H __DATE__ " " __TIME__ // build date and time
 #define STRING_CONFIG_H_AUTHOR "(none, default config)" //Who made the changes.
 
-#define ICEMAN3D 1000	//100 150 300 400 750 1000
+#define ICEMAN3D
 
 // SERIAL_PORT selects which serial port should be used for communication with the host.
 // This allows the connection of wireless adapters (for instance) to non-default port pins.
@@ -225,23 +225,9 @@
 #endif
 
 // The pullups are needed if you directly connect a mechanical endswitch between the signal and ground pins.
-#if ICEMAN3D == 150
 const bool X_ENDSTOPS_INVERTING = true; // set to true to invert the logic of the endstops.
 const bool Y_ENDSTOPS_INVERTING = true; // set to true to invert the logic of the endstops.
 const bool Z_ENDSTOPS_INVERTING = true;
-#elif ICEMAN3D == 260
-const bool X_ENDSTOPS_INVERTING = true; // set to true to invert the logic of the endstops.
-const bool Y_ENDSTOPS_INVERTING = true; // set to true to invert the logic of the endstops.
-const bool Z_ENDSTOPS_INVERTING = true;
-#elif ICEMAN3D == 100
-const bool X_ENDSTOPS_INVERTING = true;
-const bool Y_ENDSTOPS_INVERTING = true;
-const bool Z_ENDSTOPS_INVERTING = true;
-#else
-const bool X_ENDSTOPS_INVERTING = true; // set to true to invert the logic of the endstops.
-const bool Y_ENDSTOPS_INVERTING = true; // set to true to invert the logic of the endstops.
-const bool Z_ENDSTOPS_INVERTING = true;
-#endif
 //const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of the endstops.
 //#define DISABLE_MAX_ENDSTOPS
 
@@ -260,128 +246,38 @@ const bool Z_ENDSTOPS_INVERTING = true;
 
 #define INVERT_X_DIR false    // for Mendel set to false, for Orca set to true
 #define INVERT_Y_DIR true   // for Mendel set to true, for Orca set to false
-
-#if ICEMAN3D == 85
-#define INVERT_Z_DIR true     // for Mendel set to false, for Orca set to true
-#else
 #define INVERT_Z_DIR false
-#endif
+
+
 #define INVERT_E0_DIR true   // for direct drive extruder v9 set to true, for geared extruder set to false
 #define INVERT_E1_DIR false    // for direct drive extruder v9 set to true, for geared extruder set to false
 #define INVERT_E2_DIR false   // for direct drive extruder v9 set to true, for geared extruder set to false
 
 // ENDSTOP SETTINGS:
 // Sets direction of endstops when homing; 1=MAX, -1=MIN
-#if ICEMAN3D == 260
-#define X_HOME_DIR 1
-#define Y_HOME_DIR 1
-#else
+
 #define X_HOME_DIR -1
 #define Y_HOME_DIR -1
-#endif
 #define Z_HOME_DIR -1
 
 #ifndef ICEMAN3D
 //#define min_software_endstops false
 #define min_software_endstops true //If true, axis won't move to coordinates less than HOME_POS.
 #endif
+
 #define max_software_endstops true  //If true, axis won't move to coordinates greater than the defined lengths below.
+
 // Travel limits after homing
-//#define X_MAX_POS 150
+#define X_MAX_POS 150
 #define X_MIN_POS 0
-//#define Y_MAX_POS 150
+#define Y_MAX_POS 150
 #define Y_MIN_POS 0
-//#define Z_MAX_POS 150
+#define Z_MAX_POS 150
 #define Z_MIN_POS 0
 
-#ifndef ICEMAN3D
-#define X_MAX_POS 150
-#define Y_MAX_POS 150
-#define Z_MAX_POS 150
+
+
 #define DEFAULT_AXIS_STEPS_PER_UNIT   {94.1174,94.1174,400,94.4962114}  // default steps per unit for ultimaker
-#else
-#if ICEMAN3D == 85
-#define X_MAX_POS 85
-#define Y_MAX_POS 85
-#define Z_MAX_POS 85
-#define ADJUSTERROR 10
-#define X_ADJUSTOFFSET 110
-#define Y_ADJUSTOFFSET 120
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {87.489,87.489,4000,84.2105236}  // default steps per unit for ultimaker
-#endif
-#if ICEMAN3D == 100
-#define X_MAX_POS 100
-#define Y_MAX_POS 100
-#define Z_MAX_POS 100
-#define ADJUSTERROR 10
-#define X_ADJUSTOFFSET 110
-#define Y_ADJUSTOFFSET 120
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {94.1174,94.1174,400,84.2105236}  // default steps per unit for ultimaker
-#endif
-#if ICEMAN3D == 150
-#define X_MAX_POS 150
-#define Y_MAX_POS 150
-#define Z_MAX_POS 150
-#define ADJUSTERROR 10
-#define X_ADJUSTOFFSET 110
-#define Y_ADJUSTOFFSET 120
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {94.1174,94.1174,400,84.2105236}  // default steps per unit for ultimaker
-#endif
-#if ICEMAN3D == 200
-#define X_MAX_POS 300
-#define Y_MAX_POS 200
-#define Z_MAX_POS 200
-#define ADJUSTERROR 10
-#define X_ADJUSTOFFSET 110
-#define Y_ADJUSTOFFSET 120
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {79.99979,79.99979,400,84.2105236}  // default steps per unit for ultimaker 	110.7264,110.7264,400,94.4962114
-#endif
-#if ICEMAN3D == 260
-#define X_MAX_POS 300
-#define Y_MAX_POS 260
-#define Z_MAX_POS 220
-#define ADJUSTERROR 10
-#define X_ADJUSTOFFSET 110
-#define Y_ADJUSTOFFSET 120
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {79.99979,79.99979,800,84.2105236}  // default steps per unit for ultimaker 	110.7264,110.7264,400,94.4962114
-#endif
-#if ICEMAN3D == 300
-#define X_MAX_POS 320
-#define Y_MAX_POS 320
-#define Z_MAX_POS 320
-#define ADJUSTERROR 10
-#define X_ADJUSTOFFSET 110
-#define Y_ADJUSTOFFSET 120
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {78.74,78.74,400,84.2105236}  // default steps per unit for ultimaker  79.99979,79.99979,400,94.4962114
-#endif
-#if ICEMAN3D == 750
-#define X_MAX_POS 750
-#define Y_MAX_POS 750
-#define Z_MAX_POS 750
-#define ADJUSTERROR 10
-#define X_ADJUSTOFFSET 110
-#define Y_ADJUSTOFFSET 120
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {78.74,78.74,400,84.2105236}  // default steps per unit for ultimaker  79.99979,79.99979,400,94.4962114
-#endif
-#if ICEMAN3D == 1000
-#define X_MAX_POS 1000
-#define Y_MAX_POS 1000
-#define Z_MAX_POS 1000
-#define ADJUSTERROR 10
-#define X_ADJUSTOFFSET 110
-#define Y_ADJUSTOFFSET 120
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {78.74,78.74,400,84.2105236}  // default steps per unit for ultimaker  79.99979,79.99979,400,94.4962114
-#endif
-#if ICEMAN3D == 400
-#define X_MAX_POS 320
-#define Y_MAX_POS 320
-#define Z_MAX_POS 450
-#define ADJUSTERROR 10
-#define X_ADJUSTOFFSET 110
-#define Y_ADJUSTOFFSET 120
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {79.99979,79.99979,400,84.2105236}  // default steps per unit for ultimaker
-#endif
-#endif
 
 #define X_MAX_LENGTH (X_MAX_POS - X_MIN_POS)
 #define Y_MAX_LENGTH (Y_MAX_POS - Y_MIN_POS)
@@ -399,25 +295,13 @@ const bool Z_ENDSTOPS_INVERTING = true;
 //// MOVEMENT SETTINGS
 #define NUM_AXIS 4 // The axis order in all axis related arrays is X, Y, Z, E
 
-#ifndef ICEMAN3D
 #define HOMING_FEEDRATE {50*60, 50*60, 10*60, 0}  // set the homing speeds (mm/min)
-#else
-#if ICEMAN3D == 85
-#define HOMING_FEEDRATE {50*60, 50*60, 5*60, 0}  // set the homing speeds (mm/min)
-#else
-#define HOMING_FEEDRATE {50*60, 50*60, 10*60, 0}  // set the homing speeds (mm/min)
-#endif
-#endif
 
 
 // default settings
 
 //#define DEFAULT_AXIS_STEPS_PER_UNIT   {94.1174,94.1174,400,94.4962114}  // default steps per unit for ultimaker
-#if ICEMAN3D == 85
-#define DEFAULT_MAX_FEEDRATE          {100, 100, 5, 100}    // (mm/sec)
-#else
 #define DEFAULT_MAX_FEEDRATE          {160, 160, 20, 100}    // (mm/sec)
-#endif
 //#define DEFAULT_MAX_ACCELERATION      {9000,9000,100,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
 #define DEFAULT_MAX_ACCELERATION      {3000,3000,100,3300}
 

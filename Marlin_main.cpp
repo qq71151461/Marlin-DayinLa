@@ -320,13 +320,6 @@ void enquecommand_P(const char *cmd)
   }
 }
 
-#ifdef ICEMAN3D
-void ClearCmdBuffer(){
-	bufindr = 0;
-	bufindw = 0;
-	buflen = 0;
-}
-#endif
 
 void setup_killpin()
 {
@@ -626,59 +619,6 @@ void get_command()
 
         }
 
-		#if defined(ICEMAN3D)
-        //一些不需要等待的命令
-        /*
-        if (strstr_P(cmdbuffer[bufindw], PSTR("M106")) != NULL) {//M106
-          strchr_pointer = strchr(cmdbuffer[bufindw], 'S');
-          if (strchr_pointer != NULL){
-            fanSpeed=constrain(strtod(&cmdbuffer[bufindw][strchr_pointer - cmdbuffer[bufindw] + 1], NULL),0,255);
-          }
-          else {
-            fanSpeed=255;
-          }
-          previous_millis_cmd = millis();
-          SERIAL_PROTOCOLLNPGM(MSG_OK);
-          MYSERIAL.print("debug:");
-          MYSERIAL.println(cmdbuffer[bufindw]);
-          serial_count = 0;
-          return;
-        } else if (strstr_P(cmdbuffer[bufindw], PSTR("M220")) != NULL) {
-          strchr_pointer = strchr(cmdbuffer[bufindw], 'S');
-          if (strchr_pointer != NULL){
-            feedmultiply = strtod(&cmdbuffer[bufindw][strchr_pointer - cmdbuffer[bufindw] + 1], NULL);
-          }
-          SERIAL_PROTOCOLLNPGM(MSG_OK);
-          serial_count = 0;
-          return;
-        } else if (strstr_P(cmdbuffer[bufindw], PSTR("M221")) != NULL) {
-          strchr_pointer = strchr(cmdbuffer[bufindw], 'S');
-          if (strchr_pointer != NULL){
-            extrudemultiply = strtod(&cmdbuffer[bufindw][strchr_pointer - cmdbuffer[bufindw] + 1], NULL);
-          }
-          SERIAL_PROTOCOLLNPGM(MSG_OK);
-          serial_count = 0;
-          return;
-        }
-        */
-
-		//if(strcmp(cmdbuffer[bufindw], "M112") == 0)
-          //kill();
-		  /*
-		  if(strcmp(cmdbuffer[bufindw], "M252") == 0){
-			quickStop();
-			current_position[Z_AXIS] += 30;
-			if (current_position[Z_AXIS] > Z_MAX_POS)
-				current_position[Z_AXIS] = Z_MAX_POS;
-			plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], 60, active_extruder);
-			
-			enquecommand_P(PSTR("G28 X0 Y0"));
-			setTargetHotend(0, active_extruder);
-			PausePrint = false;
-			Stopped=false;
-		  }
-		  */
-		#endif
 		  
         bufindw = (bufindw + 1)%BUFSIZE;
         buflen += 1;
@@ -1280,27 +1220,7 @@ void process_commands()
           manage_heater();
           manage_inactivity();
           lcd_update();
-			/*
-			#ifdef ICEMAN3D
-			while(MYSERIAL.available()){
-				serial_char = MYSERIAL.read();
-				if(serial_char == '\n' || serial_count >= (MAX_CMD_SIZE - 1)){
-					tempCmdBuffer[serial_count] = 0;
-					if(!serial_count){
-						serial_count = 0;
-						if(strcmp(tempCmdBuffer, "M252") == 0){
-							MYSERIAL.println("===================================");
-							enquecommand_P(PSTR("M252"));
-							goto endIceman;
-						}
-						break;
-					}
-				}else{
-					tempCmdBuffer[serial_count++] = serial_char;
-				}
-			}
-			#endif
-			*/
+
         #ifdef TEMP_RESIDENCY_TIME
             /* start/restart the TEMP_RESIDENCY_TIME timer whenever we reach target temp for the first time
               or when current temp falls outside the hysteresis after target temp was reached */
@@ -1312,11 +1232,7 @@ void process_commands()
           }
         #endif //TEMP_RESIDENCY_TIME
         }
-		/*
-		#ifdef ICEMAN3D
-		endIceman:
-		#endif
-		*/
+
         LCD_MESSAGEPGM(MSG_HEATING_COMPLETE);
         starttime=millis();
         previous_millis_cmd = millis();
@@ -1585,17 +1501,6 @@ void process_commands()
       {
         if(code_seen(axis_codes[i])) add_homeing[i] = code_value();
       }
-      /*
-	#ifdef ICEMAN3D
-	{
-		int i=184;
-		EEPROM_WRITE_VAR(i,add_homeing);
-		//_EEPROM_writeData(i, (uint8_t*)&add_homeing, sizeof(add_homeing));
-		i=EEPROM_OFFSET;
-		EEPROM_WRITE_VAR(i,EEPROM_VERSION);
-	}
-	#endif
-      */
       break;
     #ifdef FWRETRACT
     case 207: //M207 - set retract length S[positive mm] F[feedrate mm/sec] Z[additional zlift/hop]
@@ -1802,17 +1707,8 @@ void process_commands()
      }
     break;
 #if defined(ICEMAN3D)
-	case 222:
-		if(NoFilament)
-			MYSERIAL.println("M222 T");
-		else
-			MYSERIAL.println("M222 F");
-    return;
-	break;
   case 223://获取版本号
-    MYSERIAL.print("M223 D");
-    MYSERIAL.print(ICEMAN3D);
-    MYSERIAL.print(" S");
+    MYSERIAL.print("M223 D0 S");
     MYSERIAL.println(VERSION_STRING);
     return;
   break;
@@ -1830,154 +1726,6 @@ void process_commands()
           }
           return;
         }
-	case 250:
-	{
-		float target[4];
-        target[X_AXIS]=current_position[X_AXIS];
-        target[Y_AXIS]=current_position[Y_AXIS];
-        target[Z_AXIS]=current_position[Z_AXIS];
-        target[E_AXIS]=current_position[E_AXIS];
-		
-		lastpos[X_AXIS]=current_position[X_AXIS];
-        lastpos[Y_AXIS]=current_position[Y_AXIS];
-        lastpos[Z_AXIS]=current_position[Z_AXIS];
-        lastpos[E_AXIS]=current_position[E_AXIS];
-		
-		target[E_AXIS] -= 2;
-		plan_buffer_line(target[X_AXIS], target[Y_AXIS], target[Z_AXIS], target[E_AXIS], feedrate/60, active_extruder);
-		
-		target[Z_AXIS] += 50;
-		if(target[Z_AXIS] > Z_MAX_POS)	target[Z_AXIS] = Z_MAX_POS;
-		plan_buffer_line(target[X_AXIS], target[Y_AXIS], target[Z_AXIS], target[E_AXIS], feedrate/60, active_extruder);
-		
-		target[X_AXIS] = X_MAX_POS/2;
-		target[Y_AXIS] = 3;
-		plan_buffer_line(target[X_AXIS], target[Y_AXIS], target[Z_AXIS], target[E_AXIS], feedrate/60, active_extruder);
-		
-		target[E_AXIS] -= 50;
-		plan_buffer_line(target[X_AXIS], target[Y_AXIS], target[Z_AXIS], target[E_AXIS], feedrate/60, active_extruder);
-		
-		st_synchronize();
-        disable_e0();
-        disable_e1();
-        disable_e2();
-        delay(100);
-		MYSERIAL.println("M250");
-		uint8_t cnt=30;
-        while(cnt>0){
-          cnt--;
-          manage_heater();
-          manage_inactivity();
-          #if BEEPER > -1
-          //if(cnt==9)
-          //{
-            SET_OUTPUT(BEEPER);
-
-            WRITE(BEEPER,HIGH);
-            delay(3);
-            WRITE(BEEPER,LOW);
-            delay(3);
-          //}
-          #endif
-        }
-		break;
-	}
-	case 251:	// M251 Pause for filament change
-	{
-		//enquecommand_P(PSTR("G28 X0 Y0"));
-		//plan_buffer_line(lastpos[X_AXIS], lastpos[Y_AXIS], target[Z_AXIS], target[E_AXIS], feedrate/60, active_extruder); //move xy back
-        //plan_buffer_line(lastpos[X_AXIS], lastpos[Y_AXIS], lastpos[Z_AXIS], target[E_AXIS], feedrate/60, active_extruder); //move z back
-		current_position[E_AXIS]=lastpos[E_AXIS];
-		plan_set_e_position(current_position[E_AXIS]);
-		//lastpos[Z_AXIS] += add_homeing[Z_AXIS];
-        plan_buffer_line(lastpos[X_AXIS], lastpos[Y_AXIS], lastpos[Z_AXIS], lastpos[E_AXIS], feedrate/60, active_extruder); //final untretract
-		
-		//plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], lastpos[Z_AXIS]+50, current_position[E_AXIS]);
-		/*
-		char cmd[40];
-		char Xstr[7],Ystr[7],Zstr[7];
-		dtostrf(lastpos[X_AXIS],3,2,Xstr);
-		dtostrf(lastpos[Y_AXIS],3,2,Ystr);
-		dtostrf(lastpos[Z_AXIS],3,2,Zstr);
-		sprintf_P(cmd, PSTR("G0 F1200 X%s Y%s Z%s"), Xstr, Ystr, Zstr);
-		enquecommand(cmd);
-		*/
-		break;
-	}
-	case 252:	// M252 Stop print
-		//quickStop();
-		//ClearCmdBuffer();
-		current_position[Z_AXIS] += 10;
-		if (current_position[Z_AXIS] > Z_MAX_POS)
-			current_position[Z_AXIS] = Z_MAX_POS;
-		plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], 60, active_extruder);
-		
-		enquecommand_P(PSTR("G28 X0 Y0"));
-		setTargetHotend(0, active_extruder);
-		PausePrint = false;
-		Stopped=false;
-	break;
-	case 253:	// M253 Pause print Resume print
-	{
-		int i = 0;
-		if(PausePrint){	//Resume print
-			/*
-			for(i = 0;i < EXTRUDERS;i++)
-				setTargetHotend(temp_target_temperature[i], i);
-			setTargetBed(temp_target_temperature_bed);
-			*/
-			//setTargetHotend(temp_target_temperature[tmp_extruder], tmp_extruder);
-			
-			char cmd[20];
-			sprintf_P(cmd, PSTR("M109 S%d"), (int)temp_target_temperature[active_extruder]);
-			enquecommand(cmd);
-			///*
-			char tempStr[6];
-			dtostrf(last_position_z,3,2,tempStr);
-			sprintf_P(cmd, PSTR("G0 F300 Z%s"), tempStr);
-			enquecommand(cmd);
-			
-			dtostrf(current_position[E_AXIS]+10,3,2,tempStr);
-			sprintf_P(cmd, PSTR("G1 F3000 E%s"), tempStr);
-			enquecommand(cmd);
-			fanSpeed = lastFanSpeed;
-			//*/
-			/*
-			current_position[Z_AXIS] = last_position_z;
-			plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], 60, active_extruder);	//z axis down
-			*/
-			PausePrint = false;
-
-      st_synchronize();
-      SERIAL_PROTOCOLPGM("M253:0");
-      SERIAL_PROTOCOLLN("");
-		}else{	//Pause print
-			/*
-			for(i = 0;i < EXTRUDERS;i++)
-				setTargetHotend(0, i);
-			setTargetBed(0);
-			*/
-			lastFanSpeed = fanSpeed;
-			fanSpeed = 255;
-			last_position_z = current_position[Z_AXIS];
-			current_position[Z_AXIS] += ZOFFSET;
-			if (current_position[Z_AXIS] > Z_MAX_POS)
-				current_position[Z_AXIS] = Z_MAX_POS;
-			current_position[E_AXIS] -= 10;
-			plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], 180, active_extruder);	//z axis up
-			
-			setTargetHotend(0, active_extruder);
-			
-			PausePrint = true;
-
-      st_synchronize();
-      SERIAL_PROTOCOLPGM("M253:1");
-      SERIAL_PROTOCOLLN("");
-      
-		}
-    return;
-	break;
-	}
 	case 254:	// M254 Get homeing
 		/*
 		for(int8_t i=0; i < 3; i++){
@@ -2006,102 +1754,6 @@ void process_commands()
 		}
     return;
 	break;
-	case 255:	// M255	adjust
-	{
-    if (code_seen('S')) {//退出调平，清理数据
-      min_software_endstops = true;
-      adjustPointCount = 0;
-      for (int i=0; i<4; i++) {
-        adjustPointParams[i][0] = 0;
-        adjustPointParams[i][1] = 0;
-      }
-    } else if(code_seen('T')){//设置调平位置
-      int v=code_value();
-      if (v >= 0 && v <= 3) {
-        adjustPointCount = max(v+1, adjustPointCount);
-        if (code_seen('X')) {
-          adjustPointParams[v][0] = code_value();
-        }
-        if (code_seen('Y')) {
-          adjustPointParams[v][1] = code_value();
-        }
-      }
-    } else {//开始调平
-        /*
-        if (adjustPointCount > 0) {
-          axis_relative_modes[0] = false;
-          axis_relative_modes[1] = false;
-          axis_relative_modes[2] = true;
-          //relative_mode = false;
-        }
-        */
-        /*
-        MYSERIAL.print(adjustPointCount);
-        MYSERIAL.print(" T0 X");
-        MYSERIAL.print(adjustPointParams[0][0]);
-        MYSERIAL.print(" Y");
-        MYSERIAL.print(adjustPointParams[0][1]);
-        MYSERIAL.print(" T1 X");
-        MYSERIAL.print(adjustPointParams[1][0]);
-        MYSERIAL.print(" Y");
-        MYSERIAL.print(adjustPointParams[1][1]);
-        MYSERIAL.print(" T2 X");
-        MYSERIAL.print(adjustPointParams[2][0]);
-        MYSERIAL.print(" Y");
-        MYSERIAL.print(adjustPointParams[2][1]);
-        MYSERIAL.println("");
-        */
-
-  		  min_software_endstops = false;
-  	    saved_feedrate = feedrate;
-        saved_feedmultiply = feedmultiply;
-        feedmultiply = 100;
-        previous_millis_cmd = millis();
-
-        enable_endstops(true);
-  		  setAdjustNum(1);
-        //if (adjustPointCount == 0) {
-          for(int8_t i=0; i < NUM_AXIS; i++) {
-            destination[i] = current_position[i];
-          }
-        //}
-        feedrate = 0.0;
-
-        #if Z_HOME_DIR > 0                      // If homing away from BED do Z first
-        //HOMEAXIS(Z);
-        #endif
-  	  
-  		  HOMEAXIS(X);
-  		  HOMEAXIS(Y);
-  		
-        if (adjustPointCount > 0) {
-          plan_buffer_line(adjustPointParams[0][0], adjustPointParams[0][1], current_position[Z_AXIS], current_position[E_AXIS], 50, active_extruder);  //add
-        } else {
-    	    plan_buffer_line(current_position[X_AXIS] + adjustOffsetPos[X_AXIS], current_position[Y_AXIS] + adjustOffsetPos[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], 50, active_extruder);	//add
-        }
-
-        
-  	
-        #if Z_HOME_DIR < 0                      // If homing towards BED do Z last
-        HOMEAXIS(Z);
-        #endif
-
-        //plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
-        //MYSERIAL.println("plan_set_position");
-        #ifdef ENDSTOPS_ONLY_FOR_HOMING
-          //enable_endstops(false);
-        #endif
-
-        feedrate = saved_feedrate;
-        feedmultiply = saved_feedmultiply;
-        previous_millis_cmd = millis();
-        endstops_hit_on_purpose();
-      }
-	}
-	break;
-	case 256:	//test
-		Config_StoreSettings();
-		break;
 #endif	
     case 302: // allow cold extrudes
     {
@@ -2487,18 +2139,14 @@ void get_arc_coordinates()
 
 void clamp_to_software_endstops(float target[3])
 {
-//#ifndef ICEMAN3D
   if (min_software_endstops) {
-//#endif  
     if (target[X_AXIS] < min_pos[X_AXIS]) target[X_AXIS] = min_pos[X_AXIS];
     if (target[Y_AXIS] < min_pos[Y_AXIS]) target[Y_AXIS] = min_pos[Y_AXIS];
 	//if(add_homeing[Z_AXIS] == 0)
   if(relative_mode){
     if (target[Z_AXIS] < min_pos[Z_AXIS]-add_homeing[Z_AXIS]) target[Z_AXIS] = min_pos[Z_AXIS]-add_homeing[Z_AXIS];
   }
-//#ifndef ICEMAN3D
   }
-//#endif
 
   if (max_software_endstops) {
     if (target[X_AXIS] > max_pos[X_AXIS]) target[X_AXIS] = max_pos[X_AXIS];

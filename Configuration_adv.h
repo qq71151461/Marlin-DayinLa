@@ -280,11 +280,7 @@ const unsigned int dropsegments=5; //everything with less than this number of st
 
 //The ASCII buffer for recieving from the serial:
 #define MAX_CMD_SIZE 96
-#ifndef ICEMAN3D
 #define BUFSIZE 4
-#else
-#define BUFSIZE 4
-#endif
 
 // Firmware based and LCD controled retract
 // M207 and M208 can be used to define parameters for the retraction. 

@@ -193,15 +193,9 @@ extern int EtoPPressure;
 #endif
 
 #ifdef ICEMAN3D
-extern bool NoFilament;
-extern int adjustOffsetPos[2];
 extern bool min_software_endstops;
 extern volatile bool BLN;
 extern volatile int brightness;
-
-extern int adjustPointCount;
-extern int adjustPointParams[4][2];
-void ClearCmdBuffer();
 #endif
 
 #ifdef FWRETRACT

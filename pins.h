@@ -326,10 +326,8 @@
 #define X_STEP_PIN         54
 #define X_DIR_PIN          55
 #define X_ENABLE_PIN       38
-#if ICEMAN3D == 260
-#define X_MIN_PIN          -1
-#define X_MAX_PIN          3	//2
-#else
+
+#if defined(ICEMAN3D)
 #define X_MIN_PIN          3
 #define X_MAX_PIN          -1	//2
 #endif
@@ -337,13 +335,8 @@
 #define Y_STEP_PIN         60
 #define Y_DIR_PIN          61
 #define Y_ENABLE_PIN       56
-#if ICEMAN3D == 260
-#define Y_MIN_PIN          -1  //2	//14
-#define Y_MAX_PIN          2  //-1	//15
-#elif ICEMAN3D == 85
-#define Y_MIN_PIN          14  //14
-#define Y_MAX_PIN          -1 //15
-#else
+
+#if defined(ICEMAN3D)
 #define Y_MIN_PIN          2	//14
 #define Y_MAX_PIN          -1	//15
 #endif
@@ -355,10 +348,7 @@
 #define Z_MAX_PIN          -1	//19
 
 #if defined(ICEMAN3D)
-#define ADJUST_PIN         19
-#define E0_FILAMENT_PIN	   32
 #define LED_TIP_PIN  7
-#define BEEPER 37
 #endif
 
 #define Z2_STEP_PIN        36

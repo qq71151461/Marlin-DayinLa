@@ -64,12 +64,6 @@ void endstops_hit_on_purpose(); //avoid creation of the message, i.e. after home
 
 void enable_endstops(bool check); // Enable/disable endstop checking
 
-#ifdef ICEMAN3D
-void setAdjustNum(uint8_t _num);
-void SemiAutoAdjustInit();
-void SemiAutoAdjust();
-void beeper();
-#endif
 
 void checkStepperErrors(); //Print errors detected by the stepper
 
