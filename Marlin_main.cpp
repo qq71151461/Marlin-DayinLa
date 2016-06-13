@@ -1707,11 +1707,6 @@ void process_commands()
      }
     break;
 #if defined(ICEMAN3D)
-  case 223://获取版本号
-    MYSERIAL.print("M223 D0 S");
-    MYSERIAL.println(VERSION_STRING);
-    return;
-  break;
         case 249:  //led
 	{
           if(code_seen('B')){
